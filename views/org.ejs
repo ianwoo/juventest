@@ -9,6 +9,7 @@
 	<style>
         body        { padding-top:80px; word-wrap:break-word; background-color:lightgreen; }
 		#delete		{ margin-top:10px; }
+		.event		{ background-color:gold; border: 2px;}
     </style>
 </head>
 <body>
@@ -36,10 +37,10 @@
 
 		<div class="well" id="admins">
 			<h3>Org Admins</h3>
-			<% for (var counter2 = 0; counter2 < org.admins_array.length; counter2++){ %>
-				<p> <%= org.admins_array[counter2].admin.local.username%> </p>
+			<% for (var counter = 0; counter < org.admins_array.length; counter++){ %>
+				<p> <%= org.admins_array[counter].admin.local.username%> </p>
 				<form action="/removeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter2].admin._id%>">
+                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter].admin._id%>">
                 	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
                 	<button type="submit" class="btn btn-default btn-sm">Remove Admin</button>
             	</form>
@@ -48,23 +49,23 @@
 
 		<div class="well" id="members">
 			<h3>Org Members</h3>
-			<% for (var counter3 = 0; counter3 < org.members_array.length; counter3++){ %>
-				<p><%= org.members_array[counter3].member.local.username%>	</p>
+			<% for (var counter2 = 0; counter2 < org.members_array.length; counter2++){ %>
+				<p><%= org.members_array[counter2].member.local.username%>	</p>
 				<form action="/makeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter3].member._id%>">
+                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>">
                 	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
                 	<button type="submit" class="btn btn-default btn-sm">Make Admin</button>
             	</form>
             	<form action="/kick" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter3].member._id%>">
+                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>">
                 	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
                 	<button type="submit" class="btn btn-default btn-sm">Kick from Org</button>
             	</form>
 			<%}%>
 
 			<h3>Pending Invites</h3>
-			<% for (var counter4 = 0; counter4 < org.invitations_array.length; counter4++){ %>
-				<p><%= org.invitations_array[counter4].invited.local.username%>	</p>
+			<% for (var counter3 = 0; counter3 < org.invitations_array.length; counter3++){ %>
+				<p><%= org.invitations_array[counter3].invited.local.username%>	</p>
 			<%}%>
 
 			<form action="/invite" method="post">
@@ -76,9 +77,47 @@
 
 		<div class="well" id="events">
 			<h3>Org Events</h3>
+			<% for (var counter4 = 0; counter4 < events.length; counter4++){ %>
+				<div class="well event">
+					<strong>name</strong>: <%= events[counter4].name%> <br>
+					<strong>year</strong>: <%= events[counter4].date.year %><br>
+					<strong>month</strong>: <%= events[counter4].date.month %><br>
+					<strong>day</strong>: <%= events[counter4].date.day %><br>
+					<strong>time</strong>: <%= events[counter4].date.hour %> : <%= events[counter4].date.minute %><br>
+					<strong>price</strong>: <%= events[counter4].price.amount %><br>
+					<strong>currency</strong>: <%= events[counter4].price.currency %><br>
+					<strong>country</strong>: <%= events[counter4].location.country %><br>
+					<strong>city</strong>: <%= events[counter4].location.city %><br>
+					<h4>participants</h4>:<br>
+					<% for (var counter5 = 0; counter5 < events[counter4].participants_array[counter5].length; counter5++){ %>
+						<strong> <%= events[counter4].participants_array[counter5].local.username %> </strong><br>	
+					<% } %>
+					<form action="/deleteevent" method="post">
+              <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>">
+              <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
+          </form>
+					<form action="/addtoevent" method="post">
+						  <select class="form-control" name="addMember">
+					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
+							var checker = false;
+							for (var counter7 = 0; counter7 < events[counter4].participants_array[counter7].length; counter7++){
+							  	if (org.members_array[counter6].member._id == events[counter4].participants_array[counter7].member._id){
+							  		checker = true;
+							  	}
+							}
+							if (!checker) { %>
+								<option><%= org.members_array[counter6].member.local.username%></option>
+							<% } %> 
+					<% } %>
+
+          </form>
+				</div>
+			<%}%>
+
 			<div class="well">
 				<h4 class="text-warning">Create an Event</h4>
                 <form action="/event" method="post">
+                    <input type="text" class="form-control hidden" name="org" value="<%=org._id%>">
                     <div class="form-group">
                         <label>Event Name</label>
                         <input type="text" class="form-control" name="name">

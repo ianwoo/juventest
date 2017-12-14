@@ -18,12 +18,6 @@ var orgSchema = mongoose.Schema({
 	location: {country: String, city: String},
 	profile_image_url: String,
 	cover_image_url: String,
-	events_array: [{
-		event: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Event'
-		}
-	}],
 	members_array: [{
 		member: {
 			type: mongoose.Schema.Types.ObjectId,

@@ -51,15 +51,16 @@ module.exports = function(app, passport) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
-        var profileOrgs;
-        var queryId = req.user._id;
         //query Org schema for all Orgs with user in members array
-        Org.find({'members_array.member':{$in:queryId}}, function(err, profileOrgs) {
-            Org.find({'invitations_array.invited':{$in:queryId}}, function(err, invitedOrgs) {
-                res.render('profile.ejs', {
-                    user : req.user, // get the user out of session and pass to template
-                    orgs : profileOrgs, //pass the Orgs which user belongs to for "Your Orgs"
-                    invited : invitedOrgs
+        Org.find({'members_array.member':{$in:req.user._id}}, function(err, profileOrgs) {
+            Org.find({'invitations_array.invited':{$in:req.user._id}}, function(err, invitedOrgs) {
+                Event.find({'participants_array.member':{$in:req.user._id}}, function (err, addedtoEvents) {
+                        res.render('profile.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            orgs : profileOrgs, //pass the Orgs which user belongs to for "Your Orgs"
+                            invited : invitedOrgs,
+                            events : addedtoEvents
+                        }); 
                 });
             });
         });
@@ -106,18 +107,22 @@ module.exports = function(app, passport) {
     // ORG PAGE ============================
     // =====================================
     app.post('/orgpage', isLoggedIn, function(req,res) {
-        var loadedOrg;
         //query to find ONE org that matches req.body (_id, hidden input in form)
-        Org.findOne(req.body)
-            .populate('admins_array.admin')
-            .populate('members_array.member')
-            .populate('invitations_array.invited') //REFACTOR: refactor these three populates into a middleware function
-            .exec(function(err, loadedOrg) {
-                console.log(loadedOrg);
-                res.render('org.ejs', {
-                    user : req.user, // get the user out of session and pass to template
-                    org : loadedOrg
-                });
+        Event.find({org: req.body._id})
+            .populate('participants_array.member')
+            .exec (function (err, events){
+                Org.findOne(req.body)
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                    .exec(function(err, loadedOrg) {    
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : loadedOrg,
+                            events : events
+                        });
+                    });
+                
             });
     });
 
@@ -139,17 +144,23 @@ module.exports = function(app, passport) {
             //second query: push *invited* user to invitations_array
             Org.findByIdAndUpdate(req.body._id, {$push: {'invitations_array': {'invited':invited}}})
                 .exec(function (err, query) {
-                    //third query AFTER second query has been executed, pull current Org and reload
+                    //third query: find events
+                    Event.find({org: query._id})
+                    .populate('participants_array.member')
+                    .exec (function (err, events){
+                    //fourth query pull current Org and reload
                     Org.findOne({'_id': query._id})
                         .populate('admins_array.admin')
                         .populate('members_array.member')
-                        .populate('invitations_array.invited') //refactor
+                        .populate('invitations_array.invited') //refactor 
                         .exec(function (err, reload) {
                             res.render('org.ejs', {
                                 user : req.user, // get the user out of session and pass to template
-                                org : reload
+                                org : reload,
+                                events : events
                             });
                         });
+                    });
                 });
         });
     });
@@ -161,37 +172,54 @@ module.exports = function(app, passport) {
         Org.findById(req.body.orgId)
             .exec(function (err, thisOrg){
                 console.log(thisOrg);
+                var check = false;
                 for (var counter = 0; counter < thisOrg.admins_array.length; counter++){
                     //check to see if user is already an admin
                     if (thisOrg.admins_array[counter].admin == req.body.memberId){
-                        //find current org on backend again in order to populate and reload
-                        Org.findOne({'_id': thisOrg._id})
-                            .populate('admins_array.admin')
-                            .populate('members_array.member')
-                            .populate('invitations_array.invited')
-                            .exec(function(err, reload) {
-                                    res.render('org.ejs', {
-                                    user : req.user, // get the user out of session and pass to template
-                                    org : reload
-                                });
-                            });
+                        var check = true;
                     }
                 }
-                //push member id into admins array, when org page reloads it will be populated
-                Org.findByIdAndUpdate(req.body.orgId, {$push: {'admins_array':{'admin':req.body.memberId}}})
-                    .exec(function (err, query){
-                        //pull current Org and reload
-                        Org.findOne({'_id': query._id})
-                            .populate('admins_array.admin')
-                            .populate('members_array.member')
-                            .populate('invitations_array.invited') //refactor
-                            .exec(function (err, reload) {
-                                res.render('org.ejs', {
-                                    user : req.user, // get the user out of session and pass to template
-                                    org : reload
-                                });
+                if (check) {
+                    //find events
+                    Event.find({org: thisOrg._id})
+                    .populate('participants_array.member')
+                    .exec (function (err, events){
+                    //find current org on backend again in order to populate and reload
+                    Org.findOne({'_id': thisOrg._id})
+                        .populate('admins_array.admin')
+                        .populate('members_array.member')
+                        .populate('invitations_array.invited') //refactor
+                        .exec(function(err, reload) {
+                            res.render('org.ejs', {
+                                user : req.user, // get the user out of session and pass to template
+                                org : reload,
+                                events : events
                             });
-                    });    
+                        });
+                    });
+                } else {
+                    //push member id into admins array, when org page reloads it will be populated
+                    Org.findByIdAndUpdate(req.body.orgId, {$push: {'admins_array':{'admin':req.body.memberId}}})
+                        .exec(function (err, query){
+                            //find events
+                            Event.find({org: query._id})
+                            .populate('participants_array.member')
+                            .exec (function (err, events){
+                                //pull current Org and reload
+                                Org.findOne({'_id': query._id})
+                                    .populate('admins_array.admin')
+                                    .populate('members_array.member')
+                                    .populate('invitations_array.invited') //refactor 
+                                    .exec(function (err, reload) {
+                                        res.render('org.ejs', {
+                                            user : req.user, // get the user out of session and pass to template
+                                            org : reload,
+                                            events : events
+                                        });
+                                    });
+                            });    
+                        });
+                    }
             });
     });
 
@@ -200,16 +228,22 @@ module.exports = function(app, passport) {
     app.post('/removeadmin', isLoggedIn, function(req, res) {
         Org.findByIdAndUpdate(req.body.orgId, {$pull: {'admins_array':{'admin':req.body.adminId}}})
             .exec(function (err, query){
-                Org.findOne({'_id': query._id})
-                    .populate('admins_array.admin')
-                    .populate('members_array.member')
-                    .populate('invitations_array.invited') //refactor
-                    .exec(function (err, reload) {
-                        res.render('org.ejs', {
-                            user : req.user, // get the user out of session and pass to template
-                            org : reload
+                //find events
+                Event.find({org: query._id})
+                .populate('participants_array.member')
+                .exec (function (err, events){
+                    Org.findOne({'_id': query._id})
+                        .populate('admins_array.admin')
+                        .populate('members_array.member')
+                        .populate('invitations_array.invited') //refactor
+                        .exec(function (err, reload) {
+                            res.render('org.ejs', {
+                                user : req.user, // get the user out of session and pass to template
+                                org : reload,
+                                events : events
+                            });
                         });
-                    });
+                });
             });
     });
 
@@ -230,29 +264,49 @@ module.exports = function(app, passport) {
     app.post('/kick', isLoggedIn, function(req, res){
         Org.findByIdAndUpdate(req.body.orgId, {$pull: {'members_array':{'member':req.body.memberId}}})
             .exec(function (err, query){
-                Org.findOne({'_id': query._id})
-                    .populate('admins_array.admin')
-                    .populate('members_array.member')
-                    .populate('invitations_array.invited') //refactor
-                    .exec(function (err, reload) {
-                        res.render('org.ejs', {
-                            user : req.user, // get the user out of session and pass to template
-                            org : reload
+                //find events
+                Event.find({org: query._id})
+                .populate('participants_array.member')
+                .exec (function (err, events){
+                    Org.findById(query._id)
+                        .populate('admins_array.admin')
+                        .populate('members_array.member')
+                        .populate('invitations_array.invited') //refactor
+                        .exec(function (err, reload) {
+                            res.render('org.ejs', {
+                                user : req.user, // get the user out of session and pass to template
+                                org : reload,
+                                events : events
+                            });
                         });
-                    });
+                });
             });
     });
 
     //create an event
     app.post('/event', isLoggedIn, function(req,res){
-        var newEvent              = new Event(req.body);
-        newEvent.participants_array[0] = {member: req.user._id}; //add creator as first participant
-        newEvent.location = {country: req.body.country, city: req.body.city};
-        newEvent.price = {amount: req.body.amount, currency: req.body.currency};
-        newEvent.date = {year: req.body.year, month: req.body.month, day: req.body.day, hour: req.body.hour, minute: req.body.minute};
-        newOrg.save(function(err) {
+        var newEvent    = new Event(req.body);
+        newEvent.participants_array[0] = {'member': req.user._id}; //add creator as first participant
+        newEvent.location = {'country': req.body.country, 'city': req.body.city};
+        newEvent.price = {'amount': req.body.amount, currency: req.body.currency};
+        newEvent.date = {'year': req.body.year, 'month': req.body.month, 'day': req.body.day, 'hour': req.body.hour, 'minute': req.body.minute};
+        newEvent.save(function(err) { 
             res.redirect('/profile');
         });
+    });
+
+    //delete an event
+    app.post('/deleteevent', isLoggedIn, function(req,res){
+        Event.findByIdAndRemove(req.body._id).then(function (result){
+            console.log(result);
+            console.log('EVENT DELETED.');
+            res.redirect('/profile');
+        });  
+    });
+
+    //add an org member to the event
+    app.post('/addtoevent', isLoggedIn, function(req,res){
+
     })
 
     // =====================================

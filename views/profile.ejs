@@ -11,6 +11,7 @@
         body        { padding-top:80px; word-wrap:break-word; }
         .org        { background-color:lightgreen; }
         .invite     { background-color:orange; }
+        .event      { background-color:gold; }
     </style>
 </head>
 <body>
@@ -166,7 +167,17 @@
         <div class="col-sm-12" id="events">
             <div class="well">
                 <h3 class="text-success">Your Events</h3>
-
+                    <% for (var counter3 = 0; counter3 < events.length; counter3++){ %>
+                        <div class="well well-sm event">
+                            <p>
+                                <strong>event</strong>: <%= events[counter3].name %><br>
+                                <strong>year</strong>: <%= events[counter3].date.year %><br>
+                                <strong>month</strong>: <%= events[counter3].date.month %><br>
+                                <strong>day</strong>: <%= events[counter3].date.day %><br>
+                                <strong>time</strong>: <%= events[counter3].date.hour %>:<%= events[counter3].date.minute %>
+                            </p>
+                        </div>
+                    <%  } %>
             </div>
         </div>
     </div>

@@ -80,6 +80,8 @@ module.exports = function(app, passport) {
         var newOrg              = new Org(req.body);
         newOrg.admins_array[0] = {admin: req.user._id}; //add creator as first admin in admin array
         newOrg.members_array[0] = {member: req.user._id}; //add creator as first member in member array
+        newOrg.created_at = {country: req.body.country, city: req.body.city};
+        newOrg.location = {country: req.body.country, city: req.body.city};
         newOrg.save(function(err) {
             res.redirect('/profile');
         });
@@ -240,6 +242,18 @@ module.exports = function(app, passport) {
                     });
             });
     });
+
+    //create an event
+    app.post('/event', isLoggedIn, function(req,res){
+        var newEvent              = new Event(req.body);
+        newEvent.participants_array[0] = {member: req.user._id}; //add creator as first participant
+        newEvent.location = {country: req.body.country, city: req.body.city};
+        newEvent.price = {amount: req.body.amount, currency: req.body.currency};
+        newEvent.date = {year: req.body.year, month: req.body.month, day: req.body.day, hour: req.body.hour, minute: req.body.minute};
+        newOrg.save(function(err) {
+            res.redirect('/profile');
+        });
+    })
 
     // =====================================
     // LOGOUT ==============================

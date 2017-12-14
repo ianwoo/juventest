@@ -2,6 +2,7 @@
 // load the things we need
 var mongoose = require('mongoose');
 var User = require('./user');
+var Event = require('./event');
 
 // define the schema for our organisation model
 var orgSchema = mongoose.Schema({
@@ -17,7 +18,12 @@ var orgSchema = mongoose.Schema({
 	location: {country: String, city: String},
 	profile_image_url: String,
 	cover_image_url: String,
-	events_array: [],
+	events_array: [{
+		event: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Event'
+		}
+	}],
 	members_array: [{
 		member: {
 			type: mongoose.Schema.Types.ObjectId,

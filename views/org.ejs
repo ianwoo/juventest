@@ -12,7 +12,6 @@
     </style>
 </head>
 <body>
-	    
 
 	<div class="container">
 
@@ -75,10 +74,136 @@
             </form>
 		</div>
 
-
-
 		<div class="well" id="events">
-			<h2>Org Events</h2>
+			<h3>Org Events</h3>
+			<div class="well">
+				<h4 class="text-warning">Create an Event</h4>
+                <form action="/event" method="post">
+                    <div class="form-group">
+                        <label>Event Name</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="text" class="form-control" name="amount">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <input type="text" class="form-control" name="currency">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" class="form-control" name="country">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" class="form-control" name="image_url">
+                    </div>
+                    <div class="form-group">
+                    	<label>Year</label>
+                    	<select class="form-control" name="year">
+      						<option>2017</option>
+      						<option>2018</option>
+    					</select>
+                    </div>
+                    <div class="form-group">
+                    	<label>Month</label>
+                    	<select class="form-control" name="month">
+      						<option>1</option>
+      						<option>2</option>
+      						<option>3</option>
+      						<option>4</option>
+      						<option>5</option>
+      						<option>6</option>
+      						<option>7</option>
+      						<option>8</option>
+      						<option>9</option>
+      						<option>10</option>
+      						<option>11</option>
+      						<option>12</option>
+    					</select>
+                    </div>
+                    <div class="form-group">
+                    	<label>Day</label>
+                    	<select class="form-control" name="day">
+      						<option>1</option>
+      						<option>2</option>
+      						<option>3</option>
+      						<option>4</option>
+      						<option>5</option>
+      						<option>6</option>
+      						<option>7</option>
+      						<option>8</option>
+      						<option>9</option>
+      						<option>10</option>
+      						<option>11</option>
+      						<option>12</option>
+      						<option>13</option>
+      						<option>14</option>
+      						<option>15</option>
+      						<option>16</option>
+      						<option>17</option>
+      						<option>18</option>
+      						<option>19</option>
+      						<option>20</option>
+      						<option>21</option>
+      						<option>22</option>
+      						<option>23</option>
+      						<option>24</option>
+      						<option>25</option>
+      						<option>26</option>
+      						<option>27</option>
+      						<option>28</option>
+      						<option>29</option>
+      						<option>30</option>
+      						<option>31</option>
+    					</select>
+                    </div>
+                    <div class="form-group">
+                    	<label>Hour</label>
+                    	<select class="form-control" name="hour">
+      						<option>1</option>
+      						<option>2</option>
+      						<option>3</option>
+      						<option>4</option>
+      						<option>5</option>
+      						<option>6</option>
+      						<option>7</option>
+      						<option>8</option>
+      						<option>9</option>
+      						<option>10</option>
+      						<option>11</option>
+      						<option>12</option>
+      						<option>13</option>
+      						<option>14</option>
+      						<option>15</option>
+      						<option>16</option>
+      						<option>17</option>
+      						<option>18</option>
+      						<option>19</option>
+      						<option>20</option>
+      						<option>21</option>
+      						<option>22</option>
+      						<option>23</option>
+      						<option>24</option>
+    					</select>
+                    </div>
+                    <div class="form-group">
+                    	<label>Hour</label>
+                    	<select class="form-control" name="minute">
+      						<option>0</option>
+      						<option>15</option>
+      						<option>30</option>
+      						<option>45</option>
+      					</select>
+      				</div>
+                    <button type="submit" class="btn btn-warning btn-sm">Create Event</button>
+                </form>
+			</div>
 		</div>
 
 	</div>

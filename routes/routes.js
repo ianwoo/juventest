@@ -306,8 +306,11 @@ module.exports = function(app, passport) {
 
     //add an org member to the event
     app.post('/addtoevent', isLoggedIn, function(req,res){
-
-    })
+        Event.findByIdAndUpdate(req.body._id, {$push: {'participants_array':{'member':req.body.addMember}}})
+            .exec(function (err, query){
+                res.redirect('/profile');
+            });
+    });
 
     // =====================================
     // LOGOUT ==============================

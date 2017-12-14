@@ -88,10 +88,11 @@
 					<strong>currency</strong>: <%= events[counter4].price.currency %><br>
 					<strong>country</strong>: <%= events[counter4].location.country %><br>
 					<strong>city</strong>: <%= events[counter4].location.city %><br>
-					<h4>participants</h4>:<br>
+					<strong>participants</strong>:
 					<% for (var counter5 = 0; counter5 < events[counter4].participants_array[counter5].length; counter5++){ %>
-						<strong> <%= events[counter4].participants_array[counter5].local.username %> </strong><br>	
+						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
 					<% } %>
+          <br>
 					<form action="/deleteevent" method="post">
               <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>">
               <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
@@ -106,10 +107,11 @@
 							  	}
 							}
 							if (!checker) { %>
-								<option><%= org.members_array[counter6].member.local.username%></option>
+								<option><%= org.members_array[counter6].member._id%></option>
 							<% } %> 
 					<% } %>
               </select>
+              <button type="submit" class="btn btn-info btn-sm">Add Member</button>
           </form>
 				</div>
 			<%}%>

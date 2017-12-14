@@ -1,0 +1,28 @@
+{
+  "name": "passportLab",
+  "version": "1.0.0",
+  "description": "a general assembly lab for passport.js",
+  "private": true,
+  "main": "server.js",
+  "author": "Ia",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "bluebird": "^3.5.1",
+    "body-parser": "~1.0.0",
+    "connect-flash": "~0.1.1",
+    "cookie-parser": "~1.0.0",
+    "ejs": "~0.8.5",
+    "express": "~4.0.0",
+    "express-session": "~1.0.0",
+    "method-override": "~1.0.0",
+    "mongoose": "4.12.4",
+    "morgan": "~1.0.0",
+    "nodemon": "^1.12.7",
+    "passport": "~0.1.17",
+    "passport-facebook": "~1.0.2",
+    "passport-google-oauth": "~0.1.5",
+    "passport-local": "~0.1.6",
+    "passport-twitter": "~1.0.2"
+  }
+}

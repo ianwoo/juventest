@@ -1,0 +1,176 @@
+
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Juven Test</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+        .org        { background-color:lightgreen; }
+        .invite     { background-color:orange; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm" id="#logout">Logout</a>
+        <a href="#orgs" class="btn btn-success btn-sm">Orgs</a>
+        <a href="#events" class="btn btn-success btn-sm">Events</a>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-4">
+            <div class="well">
+                <h3><span class="fa fa-user"></span> Local</h3>
+
+                <% if (user.local.username) { %>
+                    <p>
+                        <strong>id</strong>: <%= user._id %><br>
+                        <strong>username</strong>: <%= user.local.username %><br>
+                        <strong>email</strong>: <%= user.local.email %><br>
+                        <form action="/email" method="post">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control" name="email">
+                            </div>
+                        <button type="submit" class="btn btn-warning btn-sm">Change/Add Email</button><br>
+                        </form>
+                    </p>
+
+                    <a href="/unlink/local" class="btn btn-default">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                <% } %>
+
+            </div>
+        </div>
+
+        <!-- FACEBOOK INFORMATION -->
+        <div class="col-sm-4">
+            <div class="well">
+                <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
+
+                <!-- check if the user has this token (is the user authenticated with this social account) -->
+                <% if (user.facebook.token) { %>
+                    <p>
+                        <strong>id</strong>: <%= user.facebook.id %><br>
+                        <strong>token</strong>: <%= user.facebook.token %><br>
+                        <strong>displayName</strong>: <%= user.facebook.displayName %><br>
+                    </p>
+
+                    <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>
+                <% } %>
+
+            </div>
+        </div>
+
+        <!-- GOOGLE INFORMATION -->
+        <div class="col-sm-4">
+            <div class="well">
+                <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
+
+                <!-- check if the user has this token (is the user authenticated with this social account) -->
+                <% if (user.google.token) { %>
+                    <p>
+                        <strong>id</strong>: <%= user.google.id %><br>
+                        <strong>token</strong>: <%= user.google.token %><br>
+                        <strong>email</strong>: <%= user.google.email %><br>
+                        <strong>name</strong>: <%= user.google.name.givenName %> <%= user.google.name.familyName %>
+                    </p>
+
+                    <a href="/unlink/google" class="btn btn-danger">Unlink</a>
+                <% } else { %>
+                    <a href="/connect/google" class="btn btn-danger">Connect Google</a>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+
+        <!-- YOUR ORGANISATIONS -->
+        <div class="col-sm-12" id="orgs">
+            <div class="well">
+                <h3 class="text-success">Your Orgs</h3>
+                    <% for (var counter = 0; counter < orgs.length; counter++){ %>
+                        <div class="well well-sm org">
+                            <p>
+                                <strong>org name</strong>: <%= orgs[counter].orgname %><br>
+                                <strong>description</strong>: <%= orgs[counter].description %><br>
+                                <form action="/orgpage" method="post">
+                                    <input type="text" class="form-control hidden" name="_id" value="<%=orgs[counter]._id%>">
+                                    <button type="submit" class="btn btn-info btn-sm">Go to Org Page</button>
+                                </form>
+                            </p>
+                        </div>
+                    <%  } %>
+            </div>
+
+            <div class="well">
+                <h3 class="text-warning">Invitations</h3>
+                <% for (var counter2 = 0; counter2 < invited.length; counter2++){ %>
+                    <div class="well well-sm invite">
+                        <p>
+                            <strong>org name</strong>: <%= invited[counter2].orgname %><br>
+                            <strong>description</strong>: <%= invited[counter2].description %><br>
+                            <form action="/acceptinvite" method="post">
+                                <input type="text" class="form-control hidden" name="_id" value="<%=invited[counter2]._id%>">
+                                <button type="submit" class="btn btn-info btn-sm">Accept Invitation</button>
+                            </form>
+                        </p>
+                    </div>
+                <%  } %>
+            </div>
+
+            <div class="well">
+                <h4 class="text-success">Create an Org</h4>
+                <form action="/org" method="post">
+                    <div class="form-group">
+                        <label>Org Name</label>
+                        <input type="text" class="form-control" name="orgname">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" class="form-control" name="description">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" class="form-control" name="country">
+                    </div>
+                    <div class="form-group">
+                        <label>Profile Image URL</label>
+                        <input type="text" class="form-control" name="profile_image_url">
+                    </div>
+                    <div class="form-group">
+                        <label>Cover Image URL</label>
+                        <input type="text" class="form-control" name="cover_image_url">
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-sm">Create Org</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- YOUR EVENTS -->
+        <div class="col-sm-12" id="events">
+            <div class="well">
+                <h3 class="text-success">Your Events</h3>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

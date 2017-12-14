@@ -1,0 +1,77 @@
+<!-- views/org.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Juven Test</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+        body        { padding-top:80px; word-wrap:break-word; background-color:lightgreen; }
+		#delete		{ margin-top:10px; }
+    </style>
+</head>
+<body>
+	    
+
+	<div class="container">
+
+    	<div class="page-header text-center">
+        	<h1><span class="fa fa-group"></span> <%= org.orgname%></h1>
+        	<a href="/profile" class="btn btn-default btn-sm" id="#profile">Back to Profile</a>
+        	<a href="#admins" class="btn btn-default btn-sm">Admins</a>
+        	<a href="#members" class="btn btn-default btn-sm">Members</a>
+        	<a href="#events" class="btn btn-default btn-sm">Events</a><br>
+
+        	<!-- this code works, we just need to toggle it off for non-admin users -->
+        	<form action="/deleteorg" method="post">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>">
+                <button type="submit" class="btn btn-danger btn-sm">Delete Org</button>
+            </form>
+    	</div>
+
+		<div class="well" id="admins">
+			<h3>Org Admins</h3>
+			<% for (var counter2 = 0; counter2 < org.admins_array.length; counter2++){ %>
+				<p> <%= org.admins_array[counter2].admin.local.username%> </p>
+				<form action="/removeadmin" method="post">
+                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter2].admin._id%>">
+                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
+                	<button type="submit" class="btn btn-default btn-sm">Remove Admin</button>
+            	</form>
+			<%}%>
+		</div>
+
+		<div class="well" id="members">
+			<h3>Org Members</h3>
+			<% for (var counter3 = 0; counter3 < org.members_array.length; counter3++){ %>
+				<p><%= org.members_array[counter3].member.local.username%>	</p>
+				<form action="/makeadmin" method="post">
+                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter3].member._id%>">
+                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
+                	<button type="submit" class="btn btn-default btn-sm">Make Admin</button>
+            	</form>
+			<%}%>
+
+			<h3>Pending Invites</h3>
+			<% for (var counter4 = 0; counter4 < org.invitations_array.length; counter4++){ %>
+				<p><%= org.invitations_array[counter4].invited.local.username%>	</p>
+			<%}%>
+
+			<form action="/invite" method="post">
+                <input type="text" class="form-control" name="username" placeholder="input username of user you wish to invite (must have registered locally)">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>">
+                <button type="submit" class="btn btn-danger btn-sm">Invite</button>
+            </form>
+		</div>
+
+
+
+		<div class="well" id="events">
+			<h2>Org Events</h2>
+		</div>
+
+	</div>
+
+</body>
+</html>

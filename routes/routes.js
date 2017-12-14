@@ -109,7 +109,7 @@ module.exports = function(app, passport) {
         Org.findOne(req.body)
             .populate('admins_array.admin')
             .populate('members_array.member')
-            .populate('invitations_array.invited') //we can probably refactor these three populates (see line 125)
+            .populate('invitations_array.invited') //REFACTOR: refactor these three populates into a middleware function
             .exec(function(err, loadedOrg) {
                 console.log(loadedOrg);
                 res.render('org.ejs', {
@@ -129,6 +129,7 @@ module.exports = function(app, passport) {
     });
 
     //invite another user to the org
+    //arguments passed: _id
     app.post('/invite', isLoggedIn, function(req,res){
         //first query: find the user, pass to *invited*
         User.findOne({'local.username':req.body.username}, function (err, invited){
@@ -140,7 +141,7 @@ module.exports = function(app, passport) {
                     Org.findOne({'_id': query._id})
                         .populate('admins_array.admin')
                         .populate('members_array.member')
-                        .populate('invitations_array.invited') //we can probably refactor these three populates (see line 94)
+                        .populate('invitations_array.invited') //refactor
                         .exec(function (err, reload) {
                             res.render('org.ejs', {
                                 user : req.user, // get the user out of session and pass to template
@@ -151,7 +152,8 @@ module.exports = function(app, passport) {
         });
     });
 
-    //make a user an admin
+    //make a user an admin (admin privilege)
+    //arguments passed: orgId, memberId
     app.post('/makeadmin', isLoggedIn, function(req,res){
         //find current org on backend
         Org.findById(req.body.orgId)
@@ -180,7 +182,7 @@ module.exports = function(app, passport) {
                         Org.findOne({'_id': query._id})
                             .populate('admins_array.admin')
                             .populate('members_array.member')
-                            .populate('invitations_array.invited') //we can probably refactor these three populates (see line 94)
+                            .populate('invitations_array.invited') //refactor
                             .exec(function (err, reload) {
                                 res.render('org.ejs', {
                                     user : req.user, // get the user out of session and pass to template
@@ -191,13 +193,45 @@ module.exports = function(app, passport) {
             });
     });
 
+    //remove an admin (admin privilege)
+    //arguments passed: orgId, adminId
     app.post('/removeadmin', isLoggedIn, function(req, res) {
         Org.findByIdAndUpdate(req.body.orgId, {$pull: {'admins_array':{'admin':req.body.adminId}}})
             .exec(function (err, query){
                 Org.findOne({'_id': query._id})
                     .populate('admins_array.admin')
                     .populate('members_array.member')
-                    .populate('invitations_array.invited') //we can probably refactor these three populates (see line 94)
+                    .populate('invitations_array.invited') //refactor
+                    .exec(function (err, reload) {
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : reload
+                        });
+                    });
+            });
+    });
+
+    //leave the org
+    //arguments passed: _id
+    app.post('/leaveorg', isLoggedIn, function(req, res){
+        Org.findByIdAndUpdate(req.body._id, {$pull: {'admins_array':{'admin':req.user._id}}})
+            .exec(function (err, query){
+                Org.findByIdAndUpdate(req.body._id, {$pull: {'members_array':{'member':req.user._id}}})
+                    .exec(function (err, query){
+                        res.redirect('/profile');
+                    });
+            });
+    });
+
+    //kick an org member from the org (admin privilege)
+    //arguments passed: orgId and memberId
+    app.post('/kick', isLoggedIn, function(req, res){
+        Org.findByIdAndUpdate(req.body.orgId, {$pull: {'members_array':{'member':req.user.memberId}}})
+            .exec(function (err, query){
+                Org.findOne({'_id': query._id})
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //refactor
                     .exec(function (err, reload) {
                         res.render('org.ejs', {
                             user : req.user, // get the user out of session and pass to template

@@ -226,7 +226,7 @@ module.exports = function(app, passport) {
     //kick an org member from the org (admin privilege)
     //arguments passed: orgId and memberId
     app.post('/kick', isLoggedIn, function(req, res){
-        Org.findByIdAndUpdate(req.body.orgId, {$pull: {'members_array':{'member':req.user.memberId}}})
+        Org.findByIdAndUpdate(req.body.orgId, {$pull: {'members_array':{'member':req.body.memberId}}})
             .exec(function (err, query){
                 Org.findOne({'_id': query._id})
                     .populate('admins_array.admin')

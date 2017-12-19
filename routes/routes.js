@@ -308,22 +308,21 @@ module.exports = function(app, passport) {
         console.log(req.body.addMember);
         Event.findByIdAndUpdate(req.body.eventId, {$push:{'participants_array':{'member':req.body.addMember}}})
             .exec(function (err, query){
-                res.redirect('/profile');
-                // Event.find({org: req.body.orgId})
-                //     .populate('participants_array.member')
-                //     .exec (function (err, events){
-                //         Org.findById(req.body.orgId)
-                //             .populate('admins_array.admin')
-                //             .populate('members_array.member')
-                //             .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
-                //             .exec(function(err, loadedOrg) {    
-                //                 res.render('org.ejs', {
-                //                     user : req.user, // get the user out of session and pass to template
-                //                     org : loadedOrg,
-                //                     events : events
-                //                 });
-                //             });
-                //     });
+                Event.find({org: req.body.orgId})
+                    .populate('participants_array.member')
+                    .exec (function (err, events){
+                        Org.findById(req.body.orgId)
+                            .populate('admins_array.admin')
+                            .populate('members_array.member')
+                            .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                            .exec(function(err, loadedOrg) {    
+                                res.render('org.ejs', {
+                                    user : req.user, // get the user out of session and pass to template
+                                    org : loadedOrg,
+                                    events : events
+                                });
+                            });
+                    });
             });                    
     });
 

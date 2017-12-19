@@ -33,7 +33,7 @@
                 <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
                 <button type="submit" class="btn btn-danger btn-sm">Leave Org</button>
             </form>
-    	</div>
+    </div>
 
 		<div class="well" id="admins">
 			<h3>Org Admins</h3>
@@ -108,8 +108,8 @@
                                     }
                                 }
                                 if (!checker) {%>
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
+                                    <div class="radio">
+                                        <label><input type="radio" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
                                     </div>
                                 <% }
         	                } %>							

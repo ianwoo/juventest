@@ -13,6 +13,7 @@
         .invite     { background-color:orange; }
         .event      { background-color:gold; }
         #userimage  { width: 20%; }
+        .eventimage { width: 100%; }
     </style>
 </head>
 <body>
@@ -179,16 +180,18 @@
             <div class="well">
                 <h3 class="text-success">Your Events</h3>
                     <% for (var counter3 = 0; counter3 < events.length; counter3++){ %>
-                        <div class="row event">
-                            <div class="col-sm-4"><img src="<%= events[counter3].image_url%>" alt="event-image"></div>
-                            <div class="col-sm-6">
-                                <p>
-                                    <strong>event</strong>: <%= events[counter3].name %><br>
-                                    <strong>year</strong>: <%= events[counter3].date.year %><br>
-                                    <strong>month</strong>: <%= events[counter3].date.month %><br>
-                                    <strong>day</strong>: <%= events[counter3].date.day %><br>
-                                    <strong>time</strong>: <%= events[counter3].date.hour %>:<%= events[counter3].date.minute %>
-                                </p>
+                        <div class="well">
+                            <div class="row event">
+                                <div class="col-sm-4"><img src="<%= events[counter3].image_url%>" alt="event-image" class="eventimage"></div>
+                                <div class="col-sm-6">
+                                    <p>
+                                        <strong>event</strong>: <%= events[counter3].name %><br>
+                                        <strong>year</strong>: <%= events[counter3].date.year %><br>
+                                        <strong>month</strong>: <%= events[counter3].date.month %><br>
+                                        <strong>day</strong>: <%= events[counter3].date.day %><br>
+                                        <strong>time</strong>: <%= events[counter3].date.hour %>:<%= events[counter3].date.minute %>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     <%  } %>

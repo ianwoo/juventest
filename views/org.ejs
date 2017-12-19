@@ -6,6 +6,11 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script
+        src="http://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
 	<style>
         body        { padding-top:80px; word-wrap:break-word; background-color:lightgreen; }
 		#delete		{ margin-top:10px; }
@@ -93,26 +98,33 @@
 
 		<div class="well" id="events">
 			<h3>Org Events</h3>
-
-            <form action="/sortbyname" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
-                <button type="submit" class="btn btn-danger btn-sm">Sort By Name</button>
-            </form>
-
-            <form action="/sortbydate" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
-                <button type="submit" class="btn btn-danger btn-sm">Sort By Date</button>
-            </form>
-
-            <form action="/sortbylocation" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
-                <button type="submit" class="btn btn-danger btn-sm">Sort By Location</button>
-            </form>
-
-            <form action="/sortbyprice" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
-                <button type="submit" class="btn btn-danger btn-sm">Sort By Price</button>
-            </form>
+            
+            <div class="row">
+                <div class="col-sm-3">
+                    <form action="/sortbyname" method="post">
+                        <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Sort By Name</button>
+                    </form>
+                </div>
+                <div class="col-sm-3">
+                    <form action="/sortbydate" method="post">
+                        <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Sort By Date</button>
+                    </form>
+                </div>
+                <div class="col-sm-3">
+                    <form action="/sortbylocation" method="post">
+                        <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Sort By Location</button>
+                    </form>
+                </div>
+                <div class="col-sm-3">
+                    <form action="/sortbyprice" method="post">
+                        <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Sort By Price</button>
+                    </form>
+                </div>
+            </div>
 
 			<% for (var counter4 = 0; counter4 < events.length; counter4++){ %>
                 <div class="row event">
@@ -128,10 +140,16 @@
     					<strong>country</strong>: <%= events[counter4].location.country %><br>
     					<strong>city</strong>: <%= events[counter4].location.city %><br>
     					<strong>participants</strong>:<br>
+                        <button class="toggleparticipants<%=counter4%>">Show/Hide Participants</button>
+                        <script>
+                            $('.toggleparticipants<%=counter4%>').click(function() {
+                                $('.event<%=counter4%>').toggle()
+                            });
+                        </script>
                         <div class="row">
         					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
                                 <div class="col-sm-4">
-                                    <img class="participantimage" src="<%= events[counter4].participants_array[counter5].member.local.image_url %>" alt="participant-image"><br>
+                                    <img class="participantimage event<%=counter4%>" src="<%= events[counter4].participants_array[counter5].member.local.image_url %>" alt="participant-image" hidden><br>
             						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
                                 </div>
         					<% } %>

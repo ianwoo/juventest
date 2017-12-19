@@ -25,12 +25,12 @@
 
         	<!-- this code works, we just need to toggle it off for non-admin users -->
         	<form action="/deleteorg" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
                 <button type="submit" class="btn btn-danger btn-sm">Delete Org</button>
             </form>
 
             <form action="/leaveorg" method="post">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
                 <button type="submit" class="btn btn-danger btn-sm">Leave Org</button>
             </form>
     	</div>
@@ -40,8 +40,8 @@
 			<% for (var counter = 0; counter < org.admins_array.length; counter++){ %>
 				<p> <%= org.admins_array[counter].admin.local.username%> </p>
 				<form action="/removeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter].admin._id%>">
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
+                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter].admin._id%>" readonly>
+                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
                 	<button type="submit" class="btn btn-default btn-sm">Remove Admin</button>
             	</form>
 			<%}%>
@@ -52,13 +52,13 @@
 			<% for (var counter2 = 0; counter2 < org.members_array.length; counter2++){ %>
 				<p><%= org.members_array[counter2].member.local.username%>	</p>
 				<form action="/makeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>">
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
+                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
+                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
                 	<button type="submit" class="btn btn-default btn-sm">Make Admin</button>
             	</form>
             	<form action="/kick" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>">
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>">
+                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
+                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
                 	<button type="submit" class="btn btn-default btn-sm">Kick from Org</button>
             	</form>
 			<%}%>
@@ -70,7 +70,7 @@
 
 			<form action="/invite" method="post">
                 <input type="text" class="form-control" name="username" placeholder="input username of user you wish to invite (must have registered locally)">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
                 <button type="submit" class="btn btn-danger btn-sm">Invite</button>
             </form>
 		</div>
@@ -89,27 +89,24 @@
 					<strong>country</strong>: <%= events[counter4].location.country %><br>
 					<strong>city</strong>: <%= events[counter4].location.city %><br>
 					<strong>participants</strong>:
-					<% for (var counter5 = 0; counter5 < events[counter4].participants_array[counter5].length; counter5++){ %>
+					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
 						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
 					<% } %>
           <br>
 					<form action="/deleteevent" method="post">
-              <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>">
-              <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
-          </form>
+                        <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
+                    </form>
 					<form action="/addtoevent" method="post">
 						  <select class="form-control" name="addMember">
-					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
-							var checker = false;
-							for (var counter7 = 0; counter7 < events[counter4].participants_array[counter7].length; counter7++){
-							  	if (org.members_array[counter6].member._id == events[counter4].participants_array[counter7].member._id){
-							  		checker = true;
-							  	}
-							}
-							if (!checker) { %>
-								<option><%= org.members_array[counter6].member._id%></option>
-							<% } %> 
-					<% } %>
+					<% for (var counter6 = 0; counter6 < events[counter4].participants_array.length; counter6++){ %>
+							<% for (var counter7 = 0; counter7 < org.members_array.length; counter7++){ %>
+							  	<% if (events[counter4].participants_array[counter6].member.id == org.members_array[counter7].member.id){}
+                                    else { %>
+                                        <option><%= org.members_array[counter7].member.local.username%></option>
+                                    <% } %>
+                            <% } %>
+					<% } %>							
               </select>
               <button type="submit" class="btn btn-info btn-sm">Add Member</button>
           </form>
@@ -120,7 +117,7 @@
 			<div class="well">
 				<h4 class="text-warning">Create an Event</h4>
                 <form action="/event" method="post">
-                    <input type="text" class="form-control hidden" name="org" value="<%=org._id%>">
+                    <input type="text" class="form-control hidden" name="org" value="<%=org._id%>" readonly>
                     <div class="form-group">
                         <label>Event Name</label>
                         <input type="text" class="form-control" name="name">
@@ -155,92 +152,33 @@
                     <div class="form-group">
                     	<label>Month</label>
                     	<select class="form-control" name="month">
-            						<option>1</option>
-            						<option>2</option>
-            						<option>3</option>
-            						<option>4</option>
-            						<option>5</option>
-            						<option>6</option>
-            						<option>7</option>
-            						<option>8</option>
-            						<option>9</option>
-            						<option>10</option>
-            						<option>11</option>
-            						<option>12</option>
+            					   <% for (var counter8 = 1; counter8 < 13; counter8++){ %>
+                                       <option><%= counter8 %></option>
+                                   <%}%>
     					        </select>
                     </div>
                     <div class="form-group">
                       <label>Day</label>
                     	 <select class="form-control" name="day">
-            						<option>1</option>
-            						<option>2</option>
-            						<option>3</option>
-            						<option>4</option>
-            						<option>5</option>
-            						<option>6</option>
-            						<option>7</option>
-            						<option>8</option>
-            						<option>9</option>
-            						<option>10</option>
-            						<option>11</option>
-            						<option>12</option>
-            						<option>13</option>
-            						<option>14</option>
-            						<option>15</option>
-            						<option>16</option>
-            						<option>17</option>
-            						<option>18</option>
-            						<option>19</option>
-            						<option>20</option>
-            						<option>21</option>
-            						<option>22</option>
-            						<option>23</option>
-            						<option>24</option>
-            						<option>25</option>
-            						<option>26</option>
-            						<option>27</option>
-            						<option>28</option>
-            						<option>29</option>
-            						<option>30</option>
-            						<option>31</option>
+                                    <% for (var counter9 = 1; counter9 < 32; counter9++){ %>
+                                        <option><%= counter9 %></option>
+                                    <%}%>
   					         </select>
                     </div>
                     <div class="form-group">
                     	<label>Hour</label>
                     	<select class="form-control" name="hour">
-            						<option>1</option>
-            						<option>2</option>
-            						<option>3</option>
-            						<option>4</option>
-            						<option>5</option>
-            						<option>6</option>
-            						<option>7</option>
-            						<option>8</option>
-            						<option>9</option>
-            						<option>10</option>
-            						<option>11</option>
-            						<option>12</option>
-            						<option>13</option>
-            						<option>14</option>
-            						<option>15</option>
-            						<option>16</option>
-            						<option>17</option>
-            						<option>18</option>
-            						<option>19</option>
-            						<option>20</option>
-            						<option>21</option>
-            						<option>22</option>
-            						<option>23</option>
-            						<option>24</option>
+                                    <% for (var counter10 = 0; counter10 < 24; counter10++){ %>
+                                        <option><%= counter10 %></option>
+                                    <%}%>
   					           </select>
                     </div>
                     <div class="form-group">
-                    	<label>Hour</label>
+                    	<label>Minute</label>
                     	<select class="form-control" name="minute">
-      						      <option>0</option>
-      						      <option>15</option>
-      						      <option>30</option>
-      						      <option>45</option>
+      						        <% for (var counter11 = 0; counter11 < 12; counter11++){ %>
+                                        <option><%= counter11 * 5 %></option>
+                                    <%}%>
       					      </select>
       				      </div>
                     <button type="submit" class="btn btn-warning btn-sm">Create Event</button>

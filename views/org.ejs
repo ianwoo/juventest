@@ -11,7 +11,9 @@
 		#delete		{ margin-top:10px; }
 		.event		{ background-color:gold;}
         .container  { background-image: url(<%= org.cover_image_url %>); }
-        #eventimage { width: 100%; }
+        .eventimage { width: 100%; }
+        .memberimage { width: 80%; }
+        .participantimage { width: 90%; }
     </style>
 </head>
 <body>
@@ -40,43 +42,53 @@
 
 		<div class="well" id="admins">
 			<h3>Org Admins</h3>
-			<% for (var counter = 0; counter < org.admins_array.length; counter++){ %>
-				<p> <%= org.admins_array[counter].admin.local.username%> </p>
-				<form action="/removeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter].admin._id%>" readonly>
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
-                	<button type="submit" class="btn btn-default btn-sm">Remove Admin</button>
-            	</form>
-			<%}%>
+            <div class="row">
+    			<% for (var counter = 0; counter < org.admins_array.length; counter++){ %>
+                    <div class="col-sm-4">
+                        <img class="memberimage" src="<%= org.admins_array[counter].admin.local.image_url%>" alt="admin-image">
+        				<p> <%= org.admins_array[counter].admin.local.username%> </p>
+        				<form action="/removeadmin" method="post">
+                        	<input type="text" class="form-control hidden" name="adminId" value="<%=org.admins_array[counter].admin._id%>" readonly>
+                        	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+                        	<button type="submit" class="btn btn-default btn-sm">Remove Admin</button>
+                    	</form>
+                    </div>
+    			<%}%>
+            </div>
 		</div>
 
 		<div class="well" id="members">
 			<h3>Org Members</h3>
-			<% for (var counter2 = 0; counter2 < org.members_array.length; counter2++){ %>
-				<p><%= org.members_array[counter2].member.local.username%>	</p>
-				<form action="/makeadmin" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
-                	<button type="submit" class="btn btn-default btn-sm">Make Admin</button>
-            	</form>
-            	<form action="/kick" method="post">
-                	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
-                	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
-                	<button type="submit" class="btn btn-default btn-sm">Kick from Org</button>
-            	</form>
-			<%}%>
-
-			<h3>Pending Invites</h3>
-			<% for (var counter3 = 0; counter3 < org.invitations_array.length; counter3++){ %>
-				<p><%= org.invitations_array[counter3].invited.local.username%>	</p>
-			<%}%>
-
-            <!-- MAJOR BUG: *do not invite a user that does not exist*, this creates a "null" invitee which crashes the Org page -->
-			<form action="/invite" method="post">
-                <input type="text" class="form-control" name="username" placeholder="input username of user you wish to invite (must have registered locally)">
-                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
-                <button type="submit" class="btn btn-danger btn-sm">Invite</button>
-            </form>
+            <div class="row">
+    			<% for (var counter2 = 0; counter2 < org.members_array.length; counter2++){ %>
+                    <div class="col-sm-4">
+                        <img class="memberimage" src="<%= org.members_array[counter2].member.local.image_url%>" alt="member-image">
+        				<p><%= org.members_array[counter2].member.local.username%>	</p>
+        				<form action="/makeadmin" method="post">
+                        	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
+                        	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+                        	<button type="submit" class="btn btn-default btn-sm">Make Admin</button>
+                    	</form>
+                    	<form action="/kick" method="post">
+                        	<input type="text" class="form-control hidden" name="memberId" value="<%=org.members_array[counter2].member._id%>" readonly>
+                        	<input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+                        	<button type="submit" class="btn btn-default btn-sm">Kick from Org</button>
+                    	</form>
+                    </div>
+    			<%}%>
+            </div>
+            <div class="well-sm">
+        		<h3>Pending Invites</h3>
+        			<% for (var counter3 = 0; counter3 < org.invitations_array.length; counter3++){ %>
+        				<p><%= org.invitations_array[counter3].invited.local.username%>	</p>
+        			<%}%>
+                    <!-- MAJOR BUG: *do not invite a user that does not exist*, this creates a "null" invitee which crashes the Org page -->
+        			<form action="/invite" method="post">
+                        <input type="text" class="form-control" name="username" placeholder="input username of user you wish to invite (must have registered locally)">
+                        <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                        <button type="submit" class="btn btn-danger btn-sm">Invite</button>
+                    </form>
+            </div>
 		</div>
 
 		<div class="well" id="events">
@@ -104,7 +116,7 @@
 
 			<% for (var counter4 = 0; counter4 < events.length; counter4++){ %>
                 <div class="row event">
-                    <div class="col-sm-4"><img src="<%= events[counter4].image_url%>" alt="event-image" id="eventimage"></div>
+                    <div class="col-sm-4"><img src="<%= events[counter4].image_url%>" alt="event-image" class="eventimage"></div>
     				<div class="col-sm-8">
     					<strong>name</strong>: <%= events[counter4].name%> <br>
     					<strong>year</strong>: <%= events[counter4].date.year %><br>
@@ -115,33 +127,40 @@
     					<strong>currency</strong>: <%= events[counter4].price.currency %><br>
     					<strong>country</strong>: <%= events[counter4].location.country %><br>
     					<strong>city</strong>: <%= events[counter4].location.city %><br>
-    					<strong>participants</strong>:
-    					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
-    						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
-    					<% } %>
+    					<strong>participants</strong>:<br>
+                        <div class="row">
+        					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
+                                <div class="col-sm-4">
+                                    <img class="participantimage" src="<%= events[counter4].participants_array[counter5].member.local.image_url %>" alt="participant-image"><br>
+            						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
+                                </div>
+        					<% } %>
+                        </div>
                     <br>
     					<form action="/deleteevent" method="post">
                             <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>" readonly>
                             <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
                         </form>
-    					<form action="/addtoevent" method="post">
-                            <input type="text" class="form-control hidden" name="eventId" value="<%=events[counter4]._id%>" readonly>
-                            <input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
-            					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
-                                    var checker = false;
-            						for (var counter7 = 0; counter7 < events[counter4].participants_array.length; counter7++){
-            							if (events[counter4].participants_array[counter7].member.id == org.members_array[counter6].member.id){
-                                            checker = true;
+                        <div class="well">
+        					<form action="/addtoevent" method="post">
+                                <input type="text" class="form-control hidden" name="eventId" value="<%=events[counter4]._id%>" readonly>
+                                <input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+                					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
+                                        var checker = false;
+                						for (var counter7 = 0; counter7 < events[counter4].participants_array.length; counter7++){
+                							if (events[counter4].participants_array[counter7].member.id == org.members_array[counter6].member.id){
+                                                checker = true;
+                                            }
                                         }
-                                    }
-                                    if (!checker) {%>
-                                        <div class="radio">
-                                            <label><input type="radio" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
-                                        </div>
-                                    <% }
-            	                } %>							
-                            <button type="submit" class="btn btn-info btn-sm">Add Member</button>
-                        </form>
+                                        if (!checker) {%>
+                                            <div class="radio">
+                                                <label><input type="radio" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
+                                            </div>
+                                        <% }
+                	                } %>							
+                                <button type="submit" class="btn btn-info btn-sm">Add Member</button>
+                            </form>
+                        </div>
     				</div>
                 </div>
 			<%}%>

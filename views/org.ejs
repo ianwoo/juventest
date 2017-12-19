@@ -9,8 +9,9 @@
 	<style>
         body        { padding-top:80px; word-wrap:break-word; background-color:lightgreen; }
 		#delete		{ margin-top:10px; }
-		.event		{ background-color:gold; border: 2px;}
+		.event		{ background-color:gold;}
         .container  { background-image: url(<%= org.cover_image_url %>); }
+        #eventimage { width: 100%; }
     </style>
 </head>
 <body>
@@ -80,45 +81,69 @@
 
 		<div class="well" id="events">
 			<h3>Org Events</h3>
+
+            <form action="/sortbyname" method="post">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                <button type="submit" class="btn btn-danger btn-sm">Sort By Name</button>
+            </form>
+
+            <form action="/sortbydate" method="post">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                <button type="submit" class="btn btn-danger btn-sm">Sort By Date</button>
+            </form>
+
+            <form action="/sortbylocation" method="post">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                <button type="submit" class="btn btn-danger btn-sm">Sort By Location</button>
+            </form>
+
+            <form action="/sortbyprice" method="post">
+                <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>
+                <button type="submit" class="btn btn-danger btn-sm">Sort By Price</button>
+            </form>
+
 			<% for (var counter4 = 0; counter4 < events.length; counter4++){ %>
-				<div class="well event">
-					<strong>name</strong>: <%= events[counter4].name%> <br>
-					<strong>year</strong>: <%= events[counter4].date.year %><br>
-					<strong>month</strong>: <%= events[counter4].date.month %><br>
-					<strong>day</strong>: <%= events[counter4].date.day %><br>
-					<strong>time</strong>: <%= events[counter4].date.hour %> : <%= events[counter4].date.minute %><br>
-					<strong>price</strong>: <%= events[counter4].price.amount %><br>
-					<strong>currency</strong>: <%= events[counter4].price.currency %><br>
-					<strong>country</strong>: <%= events[counter4].location.country %><br>
-					<strong>city</strong>: <%= events[counter4].location.city %><br>
-					<strong>participants</strong>:
-					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
-						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
-					<% } %>
-                <br>
-					<form action="/deleteevent" method="post">
-                        <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>" readonly>
-                        <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
-                    </form>
-					<form action="/addtoevent" method="post">
-                        <input type="text" class="form-control hidden" name="eventId" value="<%=events[counter4]._id%>" readonly>
-                        <input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
-        					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
-                                var checker = false;
-        						for (var counter7 = 0; counter7 < events[counter4].participants_array.length; counter7++){
-        							if (events[counter4].participants_array[counter7].member.id == org.members_array[counter6].member.id){
-                                        checker = true;
+                <div class="row event">
+                    <div class="col-sm-4"><img src="<%= events[counter4].image_url%>" alt="event-image" id="eventimage"></div>
+    				<div class="col-sm-8">
+    					<strong>name</strong>: <%= events[counter4].name%> <br>
+    					<strong>year</strong>: <%= events[counter4].date.year %><br>
+    					<strong>month</strong>: <%= events[counter4].date.month %><br>
+    					<strong>day</strong>: <%= events[counter4].date.day %><br>
+    					<strong>time</strong>: <%= events[counter4].date.hour %> : <%= events[counter4].date.minute %><br>
+    					<strong>price</strong>: <%= events[counter4].price.amount %><br>
+    					<strong>currency</strong>: <%= events[counter4].price.currency %><br>
+    					<strong>country</strong>: <%= events[counter4].location.country %><br>
+    					<strong>city</strong>: <%= events[counter4].location.city %><br>
+    					<strong>participants</strong>:
+    					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
+    						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
+    					<% } %>
+                    <br>
+    					<form action="/deleteevent" method="post">
+                            <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>" readonly>
+                            <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
+                        </form>
+    					<form action="/addtoevent" method="post">
+                            <input type="text" class="form-control hidden" name="eventId" value="<%=events[counter4]._id%>" readonly>
+                            <input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+            					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
+                                    var checker = false;
+            						for (var counter7 = 0; counter7 < events[counter4].participants_array.length; counter7++){
+            							if (events[counter4].participants_array[counter7].member.id == org.members_array[counter6].member.id){
+                                            checker = true;
+                                        }
                                     }
-                                }
-                                if (!checker) {%>
-                                    <div class="radio">
-                                        <label><input type="radio" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
-                                    </div>
-                                <% }
-        	                } %>							
-                        <button type="submit" class="btn btn-info btn-sm">Add Member</button>
-                    </form>
-				</div>
+                                    if (!checker) {%>
+                                        <div class="radio">
+                                            <label><input type="radio" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
+                                        </div>
+                                    <% }
+            	                } %>							
+                            <button type="submit" class="btn btn-info btn-sm">Add Member</button>
+                        </form>
+    				</div>
+                </div>
 			<%}%>
         </div>
 

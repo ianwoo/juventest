@@ -12,12 +12,14 @@
         .org        { background-color:lightgreen; }
         .invite     { background-color:orange; }
         .event      { background-color:gold; }
+        #userimage  { width: 20%; }
     </style>
 </head>
 <body>
 <div class="container">
 
     <div class="page-header text-center">
+        <img src="<%= user.local.image_url %>" alt="profile-pic" id="userimage">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
         <a href="/logout" class="btn btn-default btn-sm" id="#logout">Logout</a>
         <a href="#orgs" class="btn btn-success btn-sm">Orgs</a>
@@ -36,22 +38,23 @@
                         <strong>id</strong>: <%= user._id %><br>
                         <strong>username</strong>: <%= user.local.username %><br>
                         <strong>email</strong>: <%= user.local.email %><br>
+                    </p>
+
                         <form action="/email" method="post">
                             <div class="form-group">
                                 <label>Email</label>
                                 <input type="text" class="form-control" name="email">
                             </div>
                         <button type="submit" class="btn btn-warning btn-sm">Change/Add Email</button><br>
-                        </form>
-                        <strong>image:</strong>: <img src="<%= user.local.image_url %>" alt="profile-pic"><br>
-                        <form action="/userimageurl" method="post">
+                        </form>               
+
+                        <form action="/userimageurl" method="post" class="userimage">
                             <div class="form-group">
                                 <label>URL</label>
                                 <input type="text" class="form-control" name="image_url">
                             </div>
                         <button type="submit" class="btn btn-warning btn-sm">Change Image URL</button><br>
                         </form>
-                    </p>
 
                     <a href="/unlink/local" class="btn btn-default">Unlink</a>
                 <% } else { %>
@@ -176,14 +179,17 @@
             <div class="well">
                 <h3 class="text-success">Your Events</h3>
                     <% for (var counter3 = 0; counter3 < events.length; counter3++){ %>
-                        <div class="well well-sm event">
-                            <p>
-                                <strong>event</strong>: <%= events[counter3].name %><br>
-                                <strong>year</strong>: <%= events[counter3].date.year %><br>
-                                <strong>month</strong>: <%= events[counter3].date.month %><br>
-                                <strong>day</strong>: <%= events[counter3].date.day %><br>
-                                <strong>time</strong>: <%= events[counter3].date.hour %>:<%= events[counter3].date.minute %>
-                            </p>
+                        <div class="row event">
+                            <div class="col-sm-4"><img src="<%= events[counter3].image_url%>" alt="event-image"></div>
+                            <div class="col-sm-6">
+                                <p>
+                                    <strong>event</strong>: <%= events[counter3].name %><br>
+                                    <strong>year</strong>: <%= events[counter3].date.year %><br>
+                                    <strong>month</strong>: <%= events[counter3].date.month %><br>
+                                    <strong>day</strong>: <%= events[counter3].date.day %><br>
+                                    <strong>time</strong>: <%= events[counter3].date.hour %>:<%= events[counter3].date.minute %>
+                                </p>
+                            </div>
                         </div>
                     <%  } %>
             </div>

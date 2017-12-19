@@ -116,7 +116,91 @@ module.exports = function(app, passport) {
     // =====================================
     app.post('/orgpage', isLoggedIn, function(req,res) {
         //query to find ONE org that matches req.body (_id, hidden input in form)
-        Event.find({org: req.body._id})
+        Event.find({'org': req.body._id})
+            .populate('participants_array.member')
+            .exec (function (err, events){
+                Org.findOne(req.body)
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                    .exec(function(err, loadedOrg) {    
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : loadedOrg,
+                            events : events
+                        });
+                    });
+            });
+    });
+
+    //reload to sort events by name {name: 1}
+    app.post('/sortbyname', isLoggedIn, function(req,res) {
+        //query to find ONE org that matches req.body (_id, hidden input in form)
+        Event.find({'org': req.body._id})
+            .populate('participants_array.member')
+            .sort({'name':1})
+            .exec (function (err, events){
+                Org.findOne(req.body)
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                    .exec(function(err, loadedOrg) {    
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : loadedOrg,
+                            events : events
+                        });
+                    });
+            });
+    });
+
+    //reload to sort events by date
+    app.post('/sortbydate', isLoggedIn, function(req,res) {
+        //query to find ONE org that matches req.body (_id, hidden input in form)
+        Event.find({'org': req.body._id})
+            .sort({'date': 1})
+            .populate('participants_array.member')
+            .exec (function (err, events){
+                Org.findOne(req.body)
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                    .exec(function(err, loadedOrg) {    
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : loadedOrg,
+                            events : events
+                        });
+                    });
+            });
+    });
+
+    //reload to sort events by location
+    app.post('/sortbylocation', isLoggedIn, function(req,res) {
+        //query to find ONE org that matches req.body (_id, hidden input in form)
+        Event.find({'org': req.body._id})
+            .sort({'location': 1})
+            .populate('participants_array.member')
+            .exec (function (err, events){
+                Org.findOne(req.body)
+                    .populate('admins_array.admin')
+                    .populate('members_array.member')
+                    .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                    .exec(function(err, loadedOrg) {    
+                        res.render('org.ejs', {
+                            user : req.user, // get the user out of session and pass to template
+                            org : loadedOrg,
+                            events : events
+                        });
+                    });
+            });
+    });
+
+    //reload to sort events by price {currency: 1, amount: 1}
+    app.post('/sortbyprice', isLoggedIn, function(req,res) {
+        //query to find ONE org that matches req.body (_id, hidden input in form)
+        Event.find({'org': req.body._id})
+            .sort({'price': 1})
             .populate('participants_array.member')
             .exec (function (err, events){
                 Org.findOne(req.body)

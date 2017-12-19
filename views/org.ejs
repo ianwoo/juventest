@@ -10,6 +10,7 @@
         body        { padding-top:80px; word-wrap:break-word; background-color:lightgreen; }
 		#delete		{ margin-top:10px; }
 		.event		{ background-color:gold; border: 2px;}
+        .container  { background-image: url(<%= org.cover_image_url %>); }
     </style>
 </head>
 <body>
@@ -17,6 +18,7 @@
 	<div class="container">
 
     	<div class="page-header text-center">
+            <img src='<%= org.profile_image_url%>'>
         	<h1><span class="fa fa-group"></span> <%= org.orgname%></h1>
         	<a href="/profile" class="btn btn-default btn-sm" id="#profile">Back to Profile</a>
         	<a href="#admins" class="btn btn-default btn-sm">Admins</a>
@@ -68,6 +70,7 @@
 				<p><%= org.invitations_array[counter3].invited.local.username%>	</p>
 			<%}%>
 
+            <!-- MAJOR BUG: *do not invite a user that does not exist*, this creates a "null" invitee which crashes the Org page -->
 			<form action="/invite" method="post">
                 <input type="text" class="form-control" name="username" placeholder="input username of user you wish to invite (must have registered locally)">
                 <input type="text" class="form-control hidden" name="_id" value="<%=org._id%>" readonly>

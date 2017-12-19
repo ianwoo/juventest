@@ -74,6 +74,15 @@ module.exports = function(app, passport) {
         });
     });
 
+    //add image URL
+    app.post('/userimageurl', isLoggedIn, function(req, res) {
+        var user            = req.user;
+        user.local.image_url    = req.body.image_url;
+        user.save(function(err) {
+            res.redirect('/profile');
+        });
+    });
+
     //create an org
     app.post('/org', isLoggedIn, function(req, res) {
         // create the org object

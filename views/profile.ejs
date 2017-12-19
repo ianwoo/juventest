@@ -43,6 +43,14 @@
                             </div>
                         <button type="submit" class="btn btn-warning btn-sm">Change/Add Email</button><br>
                         </form>
+                        <strong>image:</strong>: <img src="<%= user.local.image_url %>" alt="profile-pic"><br>
+                        <form action="/userimageurl" method="post">
+                            <div class="form-group">
+                                <label>URL</label>
+                                <input type="text" class="form-control" name="image_url">
+                            </div>
+                        <button type="submit" class="btn btn-warning btn-sm">Change Image URL</button><br>
+                        </form>
                     </p>
 
                     <a href="/unlink/local" class="btn btn-default">Unlink</a>

@@ -17,7 +17,6 @@ module.exports = function(app, passport) {
     // =====================================
     // show the login form
     app.get('/login', function(req, res) {
-
         // render the page and pass in any flash data if it exists
         res.render('login.ejs', { message: req.flash('loginMessage') }); 
     });
@@ -122,7 +121,6 @@ module.exports = function(app, passport) {
                             events : events
                         });
                     });
-                
             });
     });
 
@@ -305,11 +303,28 @@ module.exports = function(app, passport) {
     });
 
     //add an org member to the event
+    //arguments passed: orgId, eventId, addMember
     app.post('/addtoevent', isLoggedIn, function(req,res){
-        Event.findByIdAndUpdate(req.body._id, {$push: {'participants_array':{'member':req.body.addMember}}})
+        console.log(req.body.addMember);
+        Event.findByIdAndUpdate(req.body.eventId, {$push:{'participants_array':{'member':req.body.addMember}}})
             .exec(function (err, query){
                 res.redirect('/profile');
-            });
+                // Event.find({org: req.body.orgId})
+                //     .populate('participants_array.member')
+                //     .exec (function (err, events){
+                //         Org.findById(req.body.orgId)
+                //             .populate('admins_array.admin')
+                //             .populate('members_array.member')
+                //             .populate('invitations_array.invited') //REFACTOR: refactor these FOUR populates into a middleware function
+                //             .exec(function(err, loadedOrg) {    
+                //                 res.render('org.ejs', {
+                //                     user : req.user, // get the user out of session and pass to template
+                //                     org : loadedOrg,
+                //                     events : events
+                //                 });
+                //             });
+                //     });
+            });                    
     });
 
     // =====================================

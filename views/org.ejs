@@ -92,27 +92,32 @@
 					<% for (var counter5 = 0; counter5 < events[counter4].participants_array.length; counter5++){ %>
 						<strong> <%= events[counter4].participants_array[counter5].member.local.username %> </strong>
 					<% } %>
-          <br>
+                <br>
 					<form action="/deleteevent" method="post">
                         <input type="text" class="form-control hidden" name="_id" value="<%=events[counter4]._id%>" readonly>
                         <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
                     </form>
 					<form action="/addtoevent" method="post">
-						  <select class="form-control" name="addMember">
-					<% for (var counter6 = 0; counter6 < events[counter4].participants_array.length; counter6++){ %>
-							<% for (var counter7 = 0; counter7 < org.members_array.length; counter7++){ %>
-							  	<% if (events[counter4].participants_array[counter6].member.id == org.members_array[counter7].member.id){}
-                                    else { %>
-                                        <option><%= org.members_array[counter7].member.local.username%></option>
-                                    <% } %>
-                            <% } %>
-					<% } %>							
-              </select>
-              <button type="submit" class="btn btn-info btn-sm">Add Member</button>
-          </form>
+                        <input type="text" class="form-control hidden" name="eventId" value="<%=events[counter4]._id%>" readonly>
+                        <input type="text" class="form-control hidden" name="orgId" value="<%=org._id%>" readonly>
+        					<% for (var counter6 = 0; counter6 < org.members_array.length; counter6++){
+                                var checker = false;
+        						for (var counter7 = 0; counter7 < events[counter4].participants_array.length; counter7++){
+        							if (events[counter4].participants_array[counter7].member.id == org.members_array[counter6].member.id){
+                                        checker = true;
+                                    }
+                                }
+                                if (!checker) {%>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" value="<%=org.members_array[counter6].member._id%>" name="addMember"><%= org.members_array[counter6].member.local.username%></label>
+                                    </div>
+                                <% }
+        	                } %>							
+                        <button type="submit" class="btn btn-info btn-sm">Add Member</button>
+                    </form>
 				</div>
 			<%}%>
-    </div>
+        </div>
 
 			<div class="well">
 				<h4 class="text-warning">Create an Event</h4>
